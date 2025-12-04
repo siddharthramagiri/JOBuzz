@@ -1,0 +1,12 @@
+playwright 
+requests
+webdriver-manager
+langchain
+langchain-core
+langchain-community
+langchain-groq
+faiss-cpu
+chromadb
+python-dotenv
+sentence_transformers
+scikit-learn
