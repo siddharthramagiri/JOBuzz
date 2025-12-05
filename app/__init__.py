@@ -1,13 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from app.config import load_configurations, configure_logging, Config
-from .views import webhook_blueprint
+from flask_cors import CORS
 
 
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     
     load_configurations(app)
     app.config.from_object(Config)
@@ -15,12 +16,16 @@ def create_app():
     db.init_app(app)
     with app.app_context():
         from models.job import Job
+        from models.otp import OTP
         db.create_all()
     
     # Load configurations and logging settings
     configure_logging()
 
-    # Import and register blueprints, if any
-    app.register_blueprint(webhook_blueprint)
+    def register_blueprints():
+        from .views import webhook_blueprint
+        app.register_blueprint(webhook_blueprint)
 
+    register_blueprints()
+    
     return app

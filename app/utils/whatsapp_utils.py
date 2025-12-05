@@ -18,7 +18,6 @@ def log_http_response(response):
 
 
 def get_text_message_input(recipient, text):
-    # Return a dict instead of a JSON string
     return {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
@@ -32,10 +31,6 @@ def send_message(data):
     access_token = current_app.config.get("ACCESS_TOKEN")
     version = current_app.config.get("VERSION")
     phone_number_id = current_app.config.get("PHONE_NUMBER_ID")
-
-    # logging.info(f"ACCESS_TOKEN present: {bool(access_token)}")
-    # logging.info(f"VERSION: {version}")
-    # logging.info(f"PHONE_NUMBER_ID: {phone_number_id}")
 
     headers = {
         "Content-type": "application/json",

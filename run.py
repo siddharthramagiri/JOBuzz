@@ -1,68 +1,23 @@
-import json
+import os
+import random
+import string
+import datetime
 import logging
-from flask import jsonify
-from sqlalchemy import text
+import jwt
+from app import db
+from flask import request, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import date, time
-from scraper.scrape_google_careers import scrape_google
-from scraper.scrape_amazon_careers import scrape_amazon
-from rag.data_loader import process_all_jsons, load_json, convert_json_to_documents
-from rag.vectorstore import FaissVectorStore
-from rag.search import RAGSearch
-from app import create_app, db
-from models.job import Job
+from app.services import scrape_jobs_data, save_database, save_json_data
+from app.utils.whatsapp_utils import get_text_message_input, send_message
+from rag.data_loader import load_json
+from app import create_app
+from models.otp import OTP
 
 
 app = create_app()
 scheduler = BackgroundScheduler()
 
-def scrape_jobs_data() :
-    logging.info("Started Scraping jobs")
-    scrape_google()
-    scrape_amazon()
-    all_documents = process_all_jsons("data")
-    store = FaissVectorStore()
-    store.build_from_documents(all_documents)
-    store.load()
-    save_json_data()
-    
-    
-def save_database(all_documents):
-    try : 
-        try:
-            db.session.execute(text("TRUNCATE TABLE jobs RESTART IDENTITY CASCADE;"))
-            db.session.commit()
-            logging.info("Jobs table truncated.")
-        except Exception as e:
-            db.session.rollback()
-            logging.info(f"Skipping truncate — table not found. Error: {e}")
-            
-        logging.info("All existing jobs deleted.")
-        for doc in all_documents :
-            job = doc['content']
-            db.session.add(
-                Job(
-                    title=job["Title"],
-                    company=job["Company"],
-                    location=job["Location"],
-                    experience=job["Experience"],
-                    url=job["URL"],
-                    description=job["Description"],
-                    date_scraped=date.today(),
-                )
-            )
-        db.session.commit()
-        logging.info("New jobs inserted into Neon PostgreSQL")
-        return jsonify({"Message" : "Data Stored Successfully"}), 201
-    except Exception as e :
-        logging.info("Failed to save in Database")
-        return jsonify({"error": str(e)}), 500
-    
-    
-@app.route('/api/save_data')
-def save_json_data():
-    all_documents = load_json("data")
-    return save_database(all_documents)
+SECRET_KEY=os.getenv("SECRET_KEY")
 
 def start_scheduler():
     # Run scrape_jobs_data() every day at 02:00 AM
@@ -72,11 +27,79 @@ def start_scheduler():
 
 start_scheduler()
 
-
 @app.route('/')
 def home():
     text = "Hello, Flask!"
     return text.upper()
+
+def generate_otp(length=4):
+    return ''.join(random.choices(string.digits, k=length))
+
+@app.route('/send-otp', methods=['POST'])
+def send_otp():
+    data = request.get_json()
+    phone_number = data.get('phone')
+
+    if not phone_number:
+        return jsonify({"message": "Phone number is required"}), 400
+    
+    if len(phone_number) < 10:
+        return jsonify({"message": "Invalid phone number"}), 400
+    
+    existing_otp = OTP.query.filter_by(phone_number=phone_number).first()
+    if existing_otp:
+        db.session.delete(existing_otp)
+        db.session.commit()
+            
+    otp = generate_otp()
+
+    new_otp = OTP(phone_number=phone_number, otp=otp)
+    db.session.add(new_otp)
+    db.session.commit()
+    
+    data = get_text_message_input(recipient=phone_number, text="Your OTP is " + otp)
+    send_message(data=data)
+    
+    return jsonify({"message": "OTP sent successfully"}), 200
+
+
+@app.route('/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.get_json()
+    phone_number = data.get('phone')
+    otp = data.get('otp')
+
+    if not phone_number or not otp:
+        return jsonify({"success": False, "message": "Phone number and OTP are required"}), 400
+
+    otp_record = OTP.query.filter_by(phone_number=phone_number).first()
+
+    if not otp_record:
+        return jsonify({"success": False, "message": "OTP not found"}), 400
+
+    if otp_record.otp != otp:
+        return jsonify({"success": False, "message": "Invalid OTP"}), 400
+    
+    db.session.delete(otp_record)
+    db.session.commit()
+
+    token_payload = {
+        "phone": phone_number,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(days=7),
+        "iat": datetime.datetime.utcnow()
+    }
+
+    token = jwt.encode(token_payload, SECRET_KEY, algorithm="HS256")
+
+    return jsonify({
+        "success": True,
+        "message": "OTP verified successfully",
+        "token": token
+    }), 200
+
+@app.route('/api/save_data')
+def save_data():
+    return save_json_data()
 
 
 if __name__ == "__main__" :

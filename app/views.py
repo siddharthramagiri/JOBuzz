@@ -1,8 +1,8 @@
 import logging
 import json
-
 from flask import Blueprint, request, jsonify, current_app
-
+from . import db
+from .utils.whatsapp_utils import send_message, get_text_message_input
 from .decorators.security import signature_required
 from .utils.whatsapp_utils import (
     process_whatsapp_message,
