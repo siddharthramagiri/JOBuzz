@@ -1,9 +1,9 @@
 import os
 import json
 from dotenv import load_dotenv
-from src.vectorstore import FaissVectorStore
 from langchain_groq import ChatGroq
-from src.data_loader import process_all_jsons
+from rag.vectorstore import FaissVectorStore
+from rag.data_loader import process_all_jsons
             
 load_dotenv()
 
@@ -63,8 +63,11 @@ class RAGSearch:
         )
 
         return response.content
+    
+    def test(self):
+        print("TEST PASSED")
 
-# Example usage
+
 if __name__ == "__main__":
     rag_search = RAGSearch()
     query = "Software Engineer Jobs"

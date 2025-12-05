@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 from langchain_core.documents import Document
 import numpy as np
-from src.data_loader import process_all_jsons
+from rag.data_loader import process_all_jsons
 
 
 class EmbeddingPipeline:
@@ -60,3 +60,6 @@ class EmbeddingPipeline:
         embeddings = self.model.encode(texts, show_progress_bar=True)
         print(f"Generated embeddings with shape: {embeddings.shape}")
         return embeddings
+
+    # def test(self):
+    #     print("TEST PASSED")
