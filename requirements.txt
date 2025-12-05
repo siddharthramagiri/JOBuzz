@@ -5,8 +5,10 @@ langchain
 langchain-core
 langchain-community
 langchain-groq
+jq
 faiss-cpu
 chromadb
 python-dotenv
 sentence_transformers
+transformers
 scikit-learn
