@@ -65,3 +65,40 @@ def process_all_jsons(json_directory):
     
     print(f"All JSON documents loaded: {len(all_documents)}")
     return all_documents
+
+
+def load_json(json_directory):
+    all_documents = []
+    json_dir = Path(json_directory)
+    json_files = list(json_dir.glob("**/*.json"))
+    
+    for json_file in json_files:
+        print(f"\nProcessing: {json_file.name}")
+        try:
+            with open(json_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            if isinstance(data, list):
+                for item in data:
+                    doc = {
+                        "content": item,
+                        "metadata": {
+                            "source_file": json_file.name,
+                            "file_type": "json"
+                        }
+                    }
+                    all_documents.append(doc)
+            else:
+                doc = {
+                    "content": data,
+                    "metadata": {
+                        "source_file": json_file.name,
+                        "file_type": "json"
+                    }
+                }
+                all_documents.append(doc)
+                
+        except Exception as e:
+            print(f"Error: {e}")
+    
+    return all_documents

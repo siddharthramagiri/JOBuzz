@@ -1,6 +1,24 @@
-from playwright.sync_api import sync_playwright
+import os
 import json
 import time
+import re
+from playwright.sync_api import sync_playwright
+
+
+def extract_experience(description_text):
+    patterns = [
+        r"(\d+\+?\s*years?)",
+        r"(\d+-\d+\s*years?)",
+        r"(entry[-\s]?level)"
+    ]
+
+    text = description_text.lower()
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(0)
+
+    return "Not Specified"
 
 def scrape_amazon_jobs(playwright):
     browser = playwright.chromium.launch(headless=False)
@@ -33,7 +51,8 @@ def scrape_amazon_jobs(playwright):
             # URL
             job['Title'] = title_elem.inner_text().strip() if title_elem else ""
             job['URL'] = "https://www.amazon.jobs" + title_elem.get_attribute("href").strip() if title_elem else ""
-
+            job['Company'] = 'Amazon'
+            
             # Location
             location_elem = job_card.locator("div.location-and-id ul li:first-child")
             job['Location'] = location_elem.inner_text().strip() if location_elem.count() > 0 else ""
@@ -47,6 +66,8 @@ def scrape_amazon_jobs(playwright):
             desc_elem = job_card.locator("div.qualifications-preview")
             job['Description'] = desc_elem.inner_text().strip() if desc_elem.count() > 0 else ""
 
+            job['Experience'] = "Not Specified"
+            
             all_jobs.append(job)
 
         print(f"Scraped {len(all_jobs)} jobs so far...")
@@ -62,7 +83,13 @@ def scrape_amazon():
         if jobs == []:
             return
         # Save to JSON
-        with open("data/amazon_jobs.json", "w", encoding="utf-8") as f:
+        file_path = "data/amazon_jobs.json"
+
+        # Remove old file if exists
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            
+        with open(file_path, "w", encoding="utf-8") as f:
             json.dump(jobs, f, ensure_ascii=False, indent=4)
 
     print(f"Scraped {len(jobs)} jobs successfully.")

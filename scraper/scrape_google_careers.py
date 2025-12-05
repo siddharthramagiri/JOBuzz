@@ -1,6 +1,7 @@
-from playwright.sync_api import sync_playwright
+import os
 import json
 import time
+from playwright.sync_api import sync_playwright
 
 def scrape_jobs(playwright):
     browser = playwright.chromium.launch(headless=False)
@@ -40,7 +41,7 @@ def scrape_jobs(playwright):
 
             # Experience level
             level_elem = job_card.query_selector("span.wVSTAb")
-            job['Level'] = level_elem.inner_text().strip() if level_elem else ""
+            job['Experience'] = level_elem.inner_text().strip() if level_elem else ""
 
             # Description
             desc_elem = job_card.query_selector("div.Xsxa1e")
@@ -64,8 +65,14 @@ def scrape_google():
         all_jobs = scrape_jobs(playwright)
         if all_jobs == []:
             return
+        file_path = "data/google_jobs.json"
+
+        # Remove old file if exists
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            
         # Save to JSON
-        with open("data/google_jobs.json", "w", encoding="utf-8") as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             json.dump(all_jobs, f, ensure_ascii=False, indent=4)
 
     print(f"Scraped {len(all_jobs)} jobs successfully.")
