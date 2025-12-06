@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model jobs {
+  id           Int       @id @default(autoincrement())
+  title        String    @db.VarChar(255)
+  company      String    @db.VarChar(255)
+  location     String?   @db.VarChar(255)
+  experience   String?   @db.VarChar(255)
+  url          String?   @db.VarChar(500)
+  description  String?
+  date_scraped DateTime? @db.Date
+}
+
+model otp {
+  id           Int       @id @default(autoincrement())
+  phone_number String    @unique @db.VarChar(15)
+  otp          String    @db.VarChar(6)
+  created_at   DateTime? @db.Timestamp(6)
+}
+
+model user {
+  id                  Int      @id @default(autoincrement())
+  phone_number        String   @unique @db.VarChar
+  name                String?  @db.VarChar
+  registered          Boolean
+  interests           String[] @db.VarChar
+  preferred_locations String[] @db.VarChar
+  experience_level    String?  @db.VarChar
+}

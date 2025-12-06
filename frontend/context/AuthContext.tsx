@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setOtpSent(false);
       
       // Use replace to ensure smooth navigation
-      router.replace("/dashboard");
+      router.replace("/onboarding");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to verify OTP";
       setError(message);

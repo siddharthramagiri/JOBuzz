@@ -8,7 +8,7 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, supports_credentials=True)
     
     load_configurations(app)
     app.config.from_object(Config)
@@ -17,6 +17,7 @@ def create_app():
     with app.app_context():
         from models.job import Job
         from models.otp import OTP
+        from models.user import User
         db.create_all()
     
     # Load configurations and logging settings

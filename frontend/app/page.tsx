@@ -1,15 +1,29 @@
+'use client';
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { token, logout } = useAuth()
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <Link
-        href="/signin"
-        className="absolute top-6 right-6 rounded-full px-6 py-2 bg-black text-white dark:bg-white dark:text-black text-sm font-medium hover:opacity-80 transition"
-      >
-        Sign In
-      </Link>
+      {
+        token? (
+          <button
+            onClick={logout}
+            className="absolute top-6 right-6 rounded-full px-6 py-2 bg-red-600 text-white text-sm font-medium hover:opacity-80 transition"
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            href="/signin"
+            className="absolute top-6 right-6 rounded-full px-6 py-2 bg-black text-white dark:bg-white dark:text-black text-sm font-medium hover:opacity-80 transition"
+          >
+            Sign In
+          </Link>
+        )
+      }
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <Image
           className="dark:invert"

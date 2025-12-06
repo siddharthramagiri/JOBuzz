@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
@@ -10,17 +10,58 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Add a small delay to ensure hydration is complete
-    const timer = setTimeout(() => {
-      if (!token) {
-        router.replace("/signin");
-      } else {
-        setIsLoading(false);
-      }
-    }, 100);
+    if (!token) return;
+    let isMounted = true;
 
-    return () => clearTimeout(timer);
-  }, [token, router]);
+    async function validate() {
+      try {
+        if(!phone) { logout(); return; }
+
+        const response = await fetch("/api/onboarding", {
+          method: "GET",
+          headers: { "x-phone": phone },
+        })
+        
+        console.log(response);
+        if (!response.ok) {
+          console.error("Failed to fetch user:", response.statusText);
+          router.replace("/onboarding");
+          return;
+        }
+        const user = await response.json();
+        if (!user || user.registered === false) {
+          router.replace("/onboarding");
+          return;
+        }
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/validate-token`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!res.ok) {
+          logout();
+          return;
+        }
+        if (isMounted) setIsLoading(false);
+      } catch (error) {
+        logout();
+      }
+    }
+
+    validate();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
+
 
   if (isLoading || !token) {
     return (

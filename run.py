@@ -34,6 +34,11 @@ def verify_otp():
     from app.auth import verify_otp
     return verify_otp()
 
+@app.route("/validate-token", methods=["GET"])
+def validate_route():
+    from app.auth import validate_token
+    return validate_token()
+
 
 @app.route('/api/save_data')
 def save_data():

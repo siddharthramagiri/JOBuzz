@@ -70,3 +70,39 @@ def verify_otp():
         "message": "OTP verified successfully",
         "token": token
     }), 200
+    
+
+def validate_token():
+    auth_header = request.headers.get("Authorization")
+
+    print("AUTH HEADER =", auth_header)
+
+    if not auth_header:
+        return jsonify({"success": False, "message": "Authorization header missing"}), 401
+
+    parts = auth_header.split()
+
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        return jsonify({"success": False, "message": "Invalid token format"}), 401
+
+    token = parts[1]
+
+    try:
+        decoded = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=["HS256"],
+            options={"verify_exp": True}
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Token valid",
+            "phone": decoded.get("phone")
+        }), 200
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"success": False, "message": "Token expired"}), 401
+
+    except jwt.InvalidTokenError:
+        return jsonify({"success": False, "message": "Invalid token"}), 401
