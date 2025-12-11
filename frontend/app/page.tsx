@@ -1,87 +1,222 @@
 'use client';
 import Image from "next/image";
-import Link from "next/link";
+import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import WhatsappInput from "@/components/ui/WhatsAppInput";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 export default function Home() {
-  const { token, logout } = useAuth()
+  const { token, logout } = useAuth();
+  const router = useRouter();
+  
+  const sections = [
+    { id: "home", component: <HomeSection /> },
+    { id: "Guide", component: <Guide />},
+  ];
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const animatedElements = entry.target.querySelectorAll('.animate-fadeInUp, .animate-fadeInLeft, .animate-fadeInRight');
+          animatedElements.forEach((el, index) => {
+            setTimeout(() => {
+              if (el.classList.contains('animate-fadeInUp')) {
+                el.classList.add('animate-visible');
+              } else if (el.classList.contains('animate-fadeInLeft')) {
+                el.classList.add('animate-visible-left');
+              } else if (el.classList.contains('animate-fadeInRight')) {
+                el.classList.add('animate-visible-right');
+              }
+            }, index * 150);
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+    
+    document.querySelectorAll('section').forEach(section => {
+      observer.observe(section);
+    });
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      {
-        token? (
-          <button
-            onClick={logout}
-            className="absolute top-6 right-6 rounded-full px-6 py-2 bg-red-600 text-white text-sm font-medium hover:opacity-80 transition"
-          >
-            Logout
-          </button>
-        ) : (
-          <Link
-            href="/signin"
-            className="absolute top-6 right-6 rounded-full px-6 py-2 bg-black text-white dark:bg-white dark:text-black text-sm font-medium hover:opacity-80 transition"
-          >
-            Sign In
-          </Link>
-        )
-      }
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-[#121212] text-white relative">
+
+      <div className="min-h-screen bg-[#121212] text-white">
+        <div className="relative">
+          <div
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 opacity-70"
+              style={{ backgroundImage: "url('/uploads/heroBackgroudImg.png')" }}
+          ></div>
+          <div className="absolute inset-0 dot-pattern-overlay z-0"></div>
+
+          <section id="home" className="min-h-screen py-16 relative z-10">
+            <HomeSection />
+          </section>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-          
-        </div>
-      </main>
+
+        {sections.filter(section => section.id !== "home").map((section) => (
+            <section key={section.id} id={section.id} className="min-h-screen py-16">
+              {section.component}
+            </section>
+        ))}
+      </div>
+
     </div>
   );
+};
+
+
+const HomeSection = () => {
+  return (
+    <>
+      <main className="relative z-10">
+        <div className="max-w-7xl mx-auto px-6 pt-32 flex flex-col items-center min-h-screen relative -mt-7 font-sans">
+          <div className="absolute inset-0 dot-pattern-overlay z-0"></div>
+
+          <div className="text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-[#222]/60 border border-[#333] rounded-full py-1.5 px-5 inline-block mb-8"
+            >
+              <span className="flex items-center text-sm">
+                <span className="bg-green-500 h-2 w-2 rounded-full mr-2 animate-blink"></span>
+                <span className="text-gray-300">launching soon</span>
+              </span>
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-5xl md:text-6xl mb-6"
+            >
+              <span className="">JoBuzz </span>
+              <span className="inline-block mx-2">✦</span>
+              <span> Get Relevant Job Openings Instantly to Your WhatsApp.</span>
+            </motion.h1>
+
+
+            <motion.h3
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="text-4xl md:text-5xl mt-6 text-[#00c9a4]"
+            >
+              Let Jobs Find You
+            </motion.h3>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="text-lg text-gray-400 mt-8 max-w-3xl mx-auto"
+            >
+              <br />
+              <div className="w-full sm:w-3/4 md:w-1/2 mx-auto pb-5">
+                <WhatsappInput />
+              </div>
+              Chat with our WhatsApp bot and discover your careers.
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1 }}
+              className="mt-12"
+            >
+              <Button
+                className="bg-[#1e1e1e] border border-[#333] text-white py-5 px-6 rounded-full text-base"
+                onClick={() => {
+                  const element = document.getElementById("Guide");
+                  element?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Learn More ↓
+              </Button>
+            </motion.div>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+};
+
+
+const features = [
+  {
+    id: 1,
+    title: "Step 1",
+    description:
+      "Verify your mobile number to connect with us successfully.\nNote: This works only for Indian Phone numbers (+91).",
+    imageUrl: "/OTP.png",
+    cta: "Go to Sign In →",
+    ctaUrl: "/signin",
+  },
+  {
+    id: 2,
+    title: "Step 2",
+    description:
+      "Complete your Onboarding to finish your registration process. This lets us know your Interests and preferences.",
+    imageUrl: "/onboarding.png",
+    cta: "Go to Onboarding →",
+    ctaUrl: "/onboarding",
+  },
+  {
+    id: 3,
+    title: "Step 3",
+    description:
+      "We got you now, Leave it for our 'AI' to Automate your personalized Job haunt.",
+    imageUrl: "/chat.png",
+    cta: "Chat now →",
+    ctaUrl: "",
+  },
+  {
+    id: 4,
+    title: "Step 4",
+    description:
+      "We got you now, Leave it for our 'AI' to Automate your personalized Job haunt.",
+    imageUrl: "/mcp.png",
+    cta: "Chat now →",
+    ctaUrl: "",
+  },
+];
+
+function Guide() {
+  return (
+    <section className="max-w-7xl mx-auto px-6">
+      <h2 className="text-center text-4xl font-semibold mb-14">
+        How it works
+      </h2>
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 py-5">
+        {features.map(({ id, title, description, imageUrl, cta, ctaUrl }) => (
+          <div key={id} className="flex flex-col border border-zinc-800">
+            <div className="relative w-full h-48">
+              <Image
+                src={imageUrl}
+                alt={title}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="flex flex-col p-10">
+              <h3 className="text-xl font-sans mb-2">{title}</h3>
+              <p className="text-zinc-500 font-sans">{description}</p>
+              <a
+                href={ctaUrl}
+                className="mt-6 font-semibold text-blue-600 hover:underline"
+                >
+                {cta}
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
+

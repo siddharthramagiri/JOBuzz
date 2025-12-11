@@ -71,7 +71,7 @@ export default function SignIn() {
 
     if (!/^\d+$/.test(pasted)) return; // Only digits allowed
 
-    const digits = pasted.split("").slice(0, 4 - index); // limit based on position
+    const digits = pasted.split("").slice(0, 4 - index);
 
     const newOtp = [...otp];
     digits.forEach((d, i) => {
@@ -91,12 +91,12 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-black p-6">
-      <div className="w-full max-w-sm bg-white dark:bg-zinc-900 p-8 rounded-xl shadow-lg">
-        <h1 className="text-3xl font-bold mb-2 text-black dark:text-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-black p-6" style={{ backgroundImage: "url('/uploads/heroBackgroudImg.png')" }}>
+      <div className="w-full max-w-sm bg-zinc-900 p-8 rounded-xl shadow-lg">
+        <h1 className="text-3xl font-sans mb-2 text-white">
           JoBuzz
         </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-sm text-gray-400 mb-6">
           Sign in with your phone number
         </p>
 
@@ -104,31 +104,31 @@ export default function SignIn() {
           <form onSubmit={handleSendOtp} className="space-y-4">
             {/* Phone Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Phone Number
               </label>
 
               <div className="flex items-center gap-2">
-                <div className="px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-sm font-medium whitespace-nowrap">
+                <div className="px-3 py-2 bg-zinc-800 border text-zinc-500 border-zinc-700 rounded-lg text-sm font-medium whitespace-nowrap">
                   +91
                 </div>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, ""); // only digits
-                    setPhone(val.slice(0, 10)); // max 10 digits
+                    const val = e.target.value.replace(/\D/g, "");
+                    setPhone(val.slice(0, 10));
                   }}
                   placeholder="10-digit number"
                   maxLength={10}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full px-3 py-2 border border-zinc-700 rounded-lg bg-zinc-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
                   disabled={loading}
                 />
               </div>
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg text-sm">
+              <div className="p-3 bg-red-900/20 border border-red-800 text-red-400 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -137,7 +137,7 @@ export default function SignIn() {
             <button
               type="submit"
               disabled={loading || phone.length < 10}
-              className="w-full py-2 bg-black text-white dark:bg-white dark:text-black rounded-lg font-medium hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="w-full py-2 bg-white text-black rounded-lg font-medium hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {loading ? "Sending..." : "Send OTP"}
             </button>
@@ -145,10 +145,10 @@ export default function SignIn() {
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Enter OTP
               </label>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-xs text-gray-400 mb-4">
                 A 4-digit OTP has been sent to +91{phone}
               </p>
 
@@ -167,7 +167,7 @@ export default function SignIn() {
                     onChange={(e) => handleOtpChange(e.target.value, index)}
                     onKeyDown={(e) => handleBackspace(e, index)}
                     onPaste={(e) => handlePaste(e, index)}
-                    className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent"
+                    className="w-14 h-14 text-center text-2xl font-bold border-2 border-zinc-700 rounded-lg bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                     disabled={loading}
                   />
                 ))}
@@ -175,7 +175,7 @@ export default function SignIn() {
             </div>
 
             {error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg text-sm">
+              <div className="p-3 bg-red-900/20 border border-red-800 text-red-400 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -184,7 +184,7 @@ export default function SignIn() {
             <button
               onClick={() => handleVerifyOtp()}
               disabled={loading || otp.join("").length !== 4}
-              className="w-full py-2 bg-black text-white dark:bg-white dark:text-black rounded-lg font-medium hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="w-full py-2 bg-white text-black rounded-lg font-medium hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               {loading ? "Verifying..." : "Verify OTP"}
             </button>
@@ -196,7 +196,7 @@ export default function SignIn() {
                 handleSendOtp({ preventDefault: () => {} } as React.FormEvent);
               }}
               disabled={loading}
-              className="w-full py-2 text-black dark:text-white border border-gray-300 dark:border-zinc-700 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="w-full py-2 text-white border border-zinc-700 rounded-lg font-medium hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
               Resend OTP
             </button>
@@ -206,9 +206,10 @@ export default function SignIn() {
               onClick={() => {
                 setPhone("");
                 setOtp(["", "", "", ""]);
+                window.location.reload();
               }}
               disabled={loading}
-              className="w-full py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+              className="w-full py-2 text-sm text-gray-400 hover:text-white"
             >
               Edit Phone Number
             </button>

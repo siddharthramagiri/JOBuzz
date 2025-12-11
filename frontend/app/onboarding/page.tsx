@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export interface UserData {
   name: string;
@@ -114,22 +115,22 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-black p-6">
+    <div className="min-h-screen flex items-center justify-center bg-black p-6 pt-20 font-sans">
       <form
         onSubmit={handleSubmit}
         className=" p-8 rounded-xl shadow-lg w-full max-w-lg space-y-6"
       >
-        <h1 className="text-2xl font-bold text-black dark:text-white">Edit/ Complete Your Profile</h1>
+        <h1 className="text-2xl  text-white">Edit/ Complete Your Profile</h1>
 
         {/* Name */}
         <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">Name</label>
+          <label className="block text-sm text-gray-300 mb-2">Name</label>
           <input
             type="text"
             value={user.name}
             onChange={(e) => setUser({ ...user, name: e.target.value })}
             required
-            className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+            className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-white"
           />
         </div>
 
@@ -137,17 +138,17 @@ export default function OnboardingPage() {
         {/* <div> */}
         {/* Interests */}
         <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">Interests</label>
+          <label className="block text-sm text-gray-300 mb-2">Interests</label>
           <div className="flex flex-wrap gap-2">
             {INTERESTS.map((i) => (
               <button
               key={i}
               type="button"
               onClick={() => toggleSelection("interests", i)}
-              className={`px-3 py-1 rounded-full border dark:border-zinc-700 ${
+              className={`px-3 py-1 rounded-full border border-zinc-700 ${
                 user.interests.includes(i)
-                ? "bg-black text-white dark:bg-zinc-700 dark:text-white"
-                : "bg-gray-100 dark:bg-zinc-900 text-black dark:text-white"
+                ? "bg-zinc-700 text-white"
+                : "bg-zinc-900 text-white"
                 }`}
                 >
                 {i}
@@ -158,17 +159,17 @@ export default function OnboardingPage() {
 
         {/* Preferred Locations */}
         <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">Preferred Locations</label>
+          <label className="block text-sm text-gray-300 mb-2">Preferred Locations</label>
           <div className="flex flex-wrap gap-2">
             {LOCATIONS.map((l) => (
               <button
               key={l}
               type="button"
               onClick={() => toggleSelection("preferred_locations", l)}
-              className={`px-3 py-1 rounded-full border dark:border-zinc-400 ${
+              className={`px-3 py-1 rounded-full border border-zinc-400 ${
                 user.preferred_locations.includes(l)
-                ? "bg-black text-white dark:bg-zinc-400 dark:text-black"
-                : "bg-gray-100 dark:bg-zinc-800 text-black dark:text-white"
+                ? "bg-zinc-400 text-black"
+                : "bg-zinc-800 text-white"
                 }`}
                 >
                 {l}
@@ -180,11 +181,11 @@ export default function OnboardingPage() {
 
         {/* Experience Level */}
         <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-2">Experience Level</label>
+          <label className="block text-sm text-gray-300 mb-2">Experience Level</label>
           <select
             value={user.experience_level}
             onChange={(e) => setUser({ ...user, experience_level: e.target.value })}
-            className="w-full px-3 py-2 rounded-lg border dark:border-zinc-700 dark:bg-zinc-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+            className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-white"
           >
             <option value="">Select Level</option>
             {EXPERIENCE_LEVELS.map((level) => (
@@ -196,13 +197,14 @@ export default function OnboardingPage() {
         </div>
 
         {/* Submit */}
-        <button
+        <Button
           type="submit"
+          variant={'default'}
           disabled={!isFormComplete || loading}
-          className="w-full py-2 bg-black text-white dark:bg-white dark:text-black rounded-lg hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-2 bg-white text-black rounded-lg hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Saving..." : "Complete Onboarding"}
-        </button>
+        </Button>
       </form>
     </div>
   );
