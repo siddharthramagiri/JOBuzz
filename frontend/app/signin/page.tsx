@@ -94,7 +94,7 @@ export default function SignIn() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-black p-6" style={{ backgroundImage: "url('/uploads/heroBackgroudImg.png')" }}>
       <div className="w-full max-w-sm bg-zinc-900 p-8 rounded-xl shadow-lg">
         <h1 className="text-3xl font-sans mb-2 text-white">
-          JoBuzz
+          JOBuzz
         </h1>
         <p className="text-sm text-gray-400 mb-6">
           Sign in with your phone number

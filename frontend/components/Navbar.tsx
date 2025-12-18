@@ -42,7 +42,7 @@ const Navbar = () => {
     <nav className="fixed top-6 left-0 right-0 z-50 flex justify-center">
       <div className="bg-black/60 rounded-full py-2.5 px-8 max-w-4xl w-full mx-auto flex justify-between items-center shadow-lg backdrop-blur-sm">
         <a href="/" className="text-white text-2xl font-sans flex items-center gap-2">
-          JoBuzz
+          JOBuzz
         </a>
 
         <div className="hidden md:flex items-center space-x-10">
@@ -50,7 +50,7 @@ const Navbar = () => {
           <button onClick={() => handleNavigation("Docs")} className="text-white hover:text-gray-300 transition-colors">Docs</button>
           {/* <button onClick={() => handleNavigation("about-us")} className="text-white hover:text-gray-300 transition-colors">About Us</button> */}
           <button onClick={() => handleNavigation("faq")} className="text-white hover:text-gray-300 transition-colors">FAQ</button>
-          <button onClick={() => handleNavigation("contact")} className="text-white hover:text-gray-300 transition-colors">Contact Us</button>
+          <button onClick={() => handleNavigation("Contact")} className="text-white hover:text-gray-300 transition-colors">Contact Us</button>
         </div>
 
         <div className="relative">

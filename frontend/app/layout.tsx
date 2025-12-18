@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JoBuzz AI Aggregator",
+  title: "JOBuzz AI Aggregator",
   description: "Find jobs powered by AI",
 };
 

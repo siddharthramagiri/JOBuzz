@@ -1,11 +1,19 @@
 'use client';
 import Image from "next/image";
+import { useState } from "react";
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import WhatsappInput from "@/components/ui/WhatsAppInput";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowRight } from "lucide-react";
+
+
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export default function Home() {
   const { token, logout } = useAuth();
@@ -14,6 +22,7 @@ export default function Home() {
   const sections = [
     { id: "home", component: <HomeSection /> },
     { id: "Guide", component: <Guide />},
+    { id: "Contact", component: <Contact />},
   ];
   
   useEffect(() => {
@@ -95,7 +104,7 @@ const HomeSection = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-5xl md:text-6xl mb-6"
             >
-              <span className="">JoBuzz </span>
+              <span className="">JOBuzz </span>
               <span className="inline-block mx-2">✦</span>
               <span> Get Relevant Job Openings Instantly to Your WhatsApp.</span>
             </motion.h1>
@@ -185,7 +194,6 @@ const features = [
     ctaUrl: "",
   },
 ];
-
 function Guide() {
   return (
     <section className="max-w-7xl mx-auto px-6">
@@ -208,7 +216,7 @@ function Guide() {
               <p className="text-zinc-500 font-sans">{description}</p>
               <a
                 href={ctaUrl}
-                className="mt-6 font-semibold text-blue-600 hover:underline"
+                className="mt-6 font-semibold text-[#058d74] hover:underline"
                 >
                 {cta}
               </a>
@@ -220,3 +228,140 @@ function Guide() {
   );
 }
 
+
+function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: 'success' | 'error' | null;
+    message: string;
+  }>({ type: null, message: '' });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      setSubmitStatus({
+        type: 'success', 
+        message: 'Message sent successfully!'
+      });
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to send message. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.id]: e.target.value
+    }));
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto px-6 pt-20">
+      <div className="flex justify-center mb-12">
+        <div className="rounded-full bg-[#1e1e1e] px-8 py-2 inline-block animate-fadeInUp">
+          <span className="text-white text-lg font-medium">Let's Connect</span>
+        </div>
+      </div>
+      
+      <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 animate-fadeInUp">
+        Get in Touch
+      </h2>
+      
+      <div className="max-w-2xl mx-auto animate-fadeInUp">
+        <div className="bg-[#1a1a1a] border border-[#333] rounded-lg overflow-hidden p-8 relative">
+          {/* Terminal dots */}
+          <div className="flex space-x-2 absolute top-4 left-4">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          </div>
+          
+          <div className="mt-8 text-center mb-8">
+            <p className="text-gray-400">
+            Got questions or feedback? Whether you're here to explore, report issues, or just say hi, feel free to drop a message!
+            </p>
+          </div>
+          
+          {submitStatus.type && (
+            <div className={`mb-6 p-4 rounded ${
+              submitStatus.type === 'success' ? 'bg-green-500/20 text-green-200' : 'bg-red-500/20 text-red-200'
+            }`}>
+              {submitStatus.message}
+            </div>
+          )}
+          
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+              <Input 
+                id="name" 
+                placeholder="Your Full Name" 
+                className="bg-[#222] border-[#333] text-white"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">Email</label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="Your Email" 
+                className="bg-[#222] border-[#333] text-white"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-2">Your Message</label>
+              <Textarea
+                id="message" 
+                placeholder="Share your thoughts, feedback, or questions here!" 
+                className="bg-[#222] border-[#333] text-white min-h-[120px]"
+                value={formData.message}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full bg-[#01745f] hover:bg-[#016e5a] text-white font-medium py-5 rounded-md text-base flex items-center justify-center gap-2"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Send Message'} <ArrowRight size={16} />
+            </Button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};

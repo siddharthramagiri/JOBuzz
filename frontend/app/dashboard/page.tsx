@@ -4,6 +4,9 @@ import { useAuth } from "@/context/AuthContext";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
 export default function Dashboard() {
   const { token, phone, logout } = useAuth();
   const router = useRouter();
@@ -35,7 +38,7 @@ export default function Dashboard() {
         }
 
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/validate-token`,
+          `${API_URL}/validate-token`,
           {
             method: "GET",
             credentials: "include",
@@ -76,7 +79,7 @@ export default function Dashboard() {
       <nav className="bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-black dark:text-white">
-            JoBuzz Dashboard
+            JOBuzz Dashboard
           </h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600 dark:text-gray-400">

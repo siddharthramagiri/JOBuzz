@@ -18,6 +18,7 @@ def log_http_response(response):
 
 
 def get_text_message_input(recipient, text):
+    logging.info(f"Phone Number is : {recipient}")
     return {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
